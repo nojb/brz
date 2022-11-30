@@ -1,4 +1,4 @@
-module Brz = Brz.Re.UTF8
+module Brz = Brz.Re
 
 let rec seqn r = function
   | 0 -> Brz.one
@@ -35,3 +35,31 @@ module Test = struct
   let () =
     List.iter test_bad [5; 10; 20; 30; 40; 50; 60; 100; 200]
 end
+
+let len = 1024 * 1024
+
+let s = String.init len (fun i -> if i = len - 1 then 'b' else 'a')
+
+let () =
+  let a = Uchar.of_char 'a' in
+  let b = Uchar.of_char 'b' in
+  let r = Brz.(seq one (seq (char a) (seq (opt (char a)) (char b)))) in
+  let t0 = Unix.gettimeofday () in
+  for _ = 1 to 100 do
+    assert (Brz.matches r s)
+  done;
+  let t1 = Unix.gettimeofday () in
+  Printf.printf "Brz %.2fs\n%!" (t1 -. t0)
+
+let () =
+  let open Re in
+  let a = 'a' in
+  let b = 'b' in
+  let r = seq [char a; opt (char a); char b] in
+  let r = compile r in
+  let t0 = Unix.gettimeofday () in
+  for _ = 1 to 100 do
+    assert (Re.execp r s)
+  done;
+  let t1 = Unix.gettimeofday () in
+  Printf.printf "Re %.2fs\n%!" (t1 -. t0)
