@@ -227,46 +227,8 @@ let nonempty : t -> bool =
 let matches r s =
   match
     utf_8_fold_left (fun r c ->
-        if nonempty r then deriv c r else raise Exit
+        if true || nonempty r then deriv c r else raise Exit
       ) r s
   with
   | r -> nullable r
   | exception Exit -> false
-
-(* module ByteChar = struct *)
-(*   include Char *)
-(*   let hash = Char.code *)
-(*   let to_string = String.make 1 *)
-(* end *)
-
-(* module ByteString = struct *)
-(*   type char = Char.t *)
-(*   include String *)
-(* end *)
-
-(* module Bytes = Make(ByteChar)(ByteString) *)
-
-(* module UTF8String = struct *)
-(*   type char = Uchar.t *)
-(*   type t = string *)
-(*   let fold_left f accu s = *)
-(*     let rec loop accu pos = *)
-(*       if pos >= String.length s then *)
-(*         accu *)
-(*       else *)
-(*         let d = String.get_utf_8_uchar s pos in *)
-(*         loop (f accu (Uchar.utf_decode_uchar d)) (pos + Uchar.utf_decode_length d) *)
-(*     in *)
-(*     loop accu 0 *)
-(* end *)
-
-(* module Uchar = struct *)
-(*   include Uchar *)
-
-(*   let to_string u = *)
-(*     let buf = Buffer.create 4 in *)
-(*     Buffer.add_utf_8_uchar buf u; *)
-(*     Buffer.contents buf *)
-(* end *)
-
-(* module UTF8 = Make(Uchar)(UTF8String) *)
